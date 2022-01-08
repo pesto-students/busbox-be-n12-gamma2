@@ -1,0 +1,28 @@
+{
+  "name": "busbox-be-n12-gamma2",
+  "version": "1.0.0",
+  "description": "This is the Backend Implementation of simple Bus Ticket Booking System.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon ./src/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pesto-students/busbox-be-n12-gamma2.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pesto-students/busbox-be-n12-gamma2/issues"
+  },
+  "homepage": "https://github.com/pesto-students/busbox-be-n12-gamma2#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.2",
+    "mongoose": "^6.1.5"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  }
+}
