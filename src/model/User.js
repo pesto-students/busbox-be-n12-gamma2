@@ -1,15 +1,10 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const dbUtils = require('./dbUtils')
 
 const userSchema = new Schema({
-    email : {
-        type : String, 
-        required : true
-    }, 
-    password : {
-        type : String,
-        required : true
-    }, 
+    email : dbUtils.reqString, 
+    password : dbUtils.reqString, 
     refreshToken : String
 })
 

@@ -1,14 +1,13 @@
 const express = require('express')
-const path = require('path')
 const router = express.Router();
-
+const Bus = require('../model/Bus')
+const busController = require ('../controllers/busController')
 // router for /buses
 
 // handle following routes here
 // /buses/list
 // /buses/:busId
 
-
-router.get('/', (req, res) => res.send("Buses Router"));
-
+router.get('/list', busController.getBuses);
+router.get('/locations', busController.getLocations)
 module.exports = router;
