@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
 const dbUtils = require('./dbUtils');
+
+const Schema = mongoose.Schema;
 
 const locationSchema = new Schema({
     cityId : dbUtils.reqString,

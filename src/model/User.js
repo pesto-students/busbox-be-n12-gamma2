@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
 const dbUtils = require('./dbUtils')
+
+const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
     email : dbUtils.reqString, 

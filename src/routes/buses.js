@@ -1,13 +1,9 @@
 const express = require('express')
 const router = express.Router();
-const Bus = require('../model/Bus')
-const busController = require ('../controllers/busController')
+const busController = require ('../controllers/Bus/busController')
+
 // router for /buses
 
-// handle following routes here
-// /buses/list
-// /buses/:busId
-
-router.get('/list', busController.getBuses);
-router.get('/locations', busController.getLocations)
+router.get('/list', busController.handleListBuses);
+router.get('/locations', busController.handleGetLocations)
 module.exports = router;

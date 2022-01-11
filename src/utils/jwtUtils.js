@@ -1,6 +1,5 @@
 const jwt = require('jsonwebtoken')
 
-
 async function getAccessToken (payload){
     const token = await jwt.sign(
         payload,
@@ -18,6 +17,5 @@ async function getRefreshToken (payload){
     )
     return token;
 }
-
 
 module.exports = {getAccessToken, getRefreshToken}
