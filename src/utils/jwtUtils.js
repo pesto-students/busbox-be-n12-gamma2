@@ -6,7 +6,7 @@ async function getAccessToken (payload){
         process.env.ACCESS_TOKEN_SECRET,
         {expiresIn : '1m'}
     )
-    return token;
+    return token
 }
 
 async function getRefreshToken (payload){
@@ -15,7 +15,7 @@ async function getRefreshToken (payload){
         process.env.REFRESH_TOKEN_SECRET,
         {expiresIn : '1d'}
     )
-    return token;
+    return token
 }
 
 module.exports = {getAccessToken, getRefreshToken}

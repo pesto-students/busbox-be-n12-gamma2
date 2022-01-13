@@ -1,27 +1,7 @@
-const mongoose = require('mongoose');
+const mongoose = require('mongoose')
 const dbUtils = require('./dbUtils')
-
-const Schema = mongoose.Schema;
-
-const busRouteSchema = new Schema({
-    cityName : dbUtils.reqString,
-    cityId : dbUtils.reqString,
-    stopNumber: dbUtils.reqNumber,
-    departureTime : dbUtils.reqString
-})
-
-const seatStatusSchema = new Schema({
-    seatNumber : dbUtils.reqNumber,
-    status : dbUtils.reqString,
-    from : Number,
-    to : Number,
-    reservedFor : String
-})
-
-const ratingsSchema = new Schema({
-    rating : dbUtils.reqNumber,
-    totalRatings : dbUtils.reqNumber
-})
+const commonSchema = require('./CommonSchema')
+const Schema = mongoose.Schema
 
 const busSchema = new Schema({
     busId : dbUtils.reqString,
@@ -31,13 +11,13 @@ const busSchema = new Schema({
     numberOfSeats : dbUtils.reqNumber,
     seatLayout : dbUtils.reqString,     // 2X2 / 2X1
     aminities : [String],
-    busRoute : [busRouteSchema],
-    ratings : ratingsSchema,
-    seatStatuses : [seatStatusSchema],
+    busRoute : [commonSchema.busRouteSchema],
+    ratings : commonSchema.ratingsSchema,
+    seatStatuses : [commonSchema.seatStatusSchema],
     runningDays : {
         type : [String],
         required : true
     }
 })
 
-module.exports = mongoose.model('Bus', busSchema);
+module.exports = mongoose.model('Bus', busSchema)

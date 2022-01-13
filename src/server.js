@@ -6,13 +6,13 @@ const mongoose = require('mongoose')
 const corsOptions = require('./configs/corsOptions')
 const connectDB = require('./configs/dbConn')
 
-connectDB();
+connectDB()
 
 const app = express()
 
 // middlewares
-app.use(cors(corsOptions));
-app.use(express.urlencoded({extended: false}));
+app.use(cors(corsOptions))
+app.use(express.urlencoded({extended: false}))
 app.use(express.json())
 app.use(cookieParser())
  
@@ -23,6 +23,6 @@ app.use('/buses', require('./routes/buses'))
 
 const PORT = process.env.PORT || 3000
 mongoose.connection.once('open', () => {
-    console.log('Connected To MongoDB');
+    console.log('Connected To MongoDB')
     app.listen(PORT, () => console.log(`Listening On PORT : ${PORT}`))
 })

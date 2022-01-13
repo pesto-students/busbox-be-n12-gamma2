@@ -7,8 +7,8 @@ const connectDB = async () => {
             useNewUrlParser: true
         })
     } catch (err){
-        console.error(err);
+        console.error(err)
     }
 }
 
-module.exports=connectDB;
+module.exports=connectDB

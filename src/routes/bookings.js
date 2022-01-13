@@ -1,6 +1,6 @@
 const express = require('express')
 const path = require('path')
-const router = express.Router();
+const router = express.Router()
 
 // router for /bookings
 
@@ -14,6 +14,6 @@ const router = express.Router();
 // TODO :: POST    /bookings/cancel
 
 
-router.get('/', (req, res) => res.send("Bookings Router"));
+router.get('/', (req, res) => res.send("Bookings Router"))
 
-module.exports = router;
+module.exports = router

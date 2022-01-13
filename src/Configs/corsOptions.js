@@ -2,7 +2,7 @@ const whiteList = []
 const corsOptions = {
     origin : (origin, callback) => {
         if(whiteList.includes(origin) || !origin){
-            callback(null, true);
+            callback(null, true)
         } else {
             callback(new Error("CORS ERROR"))
         }
@@ -10,4 +10,4 @@ const corsOptions = {
     optionsSuccessStatus : 200 
 }
 
-module.exports = corsOptions;
+module.exports = corsOptions

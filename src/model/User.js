@@ -1,7 +1,7 @@
-const mongoose = require('mongoose');
+const mongoose = require('mongoose')
 const dbUtils = require('./dbUtils')
 
-const Schema = mongoose.Schema;
+const Schema = mongoose.Schema
 
 const userSchema = new Schema({
     email : dbUtils.reqString, 
@@ -9,4 +9,4 @@ const userSchema = new Schema({
     refreshToken : String
 })
 
-module.exports = mongoose.model('User', userSchema);
+module.exports = mongoose.model('User', userSchema)
