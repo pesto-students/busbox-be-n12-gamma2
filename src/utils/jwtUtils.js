@@ -4,7 +4,7 @@ async function getAccessToken (payload){
     const token = await jwt.sign(
         payload,
         process.env.ACCESS_TOKEN_SECRET,
-        {expiresIn : '1m'}
+        {expiresIn : '45m'}
     )
     return token
 }

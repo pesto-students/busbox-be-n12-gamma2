@@ -10,6 +10,7 @@ const busRouteSchema = new Schema({
 })
 
 const seatStatusSchema = new Schema({
+    seatType : dbUtils.reqString,
     seatNumber : dbUtils.reqNumber,
     status : dbUtils.reqString,
     from : Number,

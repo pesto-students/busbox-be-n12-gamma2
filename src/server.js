@@ -18,7 +18,7 @@ app.use(cookieParser())
  
 // routes
 app.use('/auth', require('./routes/auth'))
-app.use('./bookings', require('./routes/bookings'))
+app.use('/bookings', require('./routes/bookings'))
 app.use('/buses', require('./routes/buses'))
 
 const PORT = process.env.PORT || 3000

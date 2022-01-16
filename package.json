@@ -26,6 +26,9 @@
     "jsonwebtoken": "^8.5.1",
     "moment": "^2.29.1",
     "mongoose": "^6.1.5",
+    "nodemailer": "^6.7.2",
+    "redis": "^4.0.1",
+    "stripe": "^8.197.0",
     "uuid": "^8.3.2"
   },
   "devDependencies": {

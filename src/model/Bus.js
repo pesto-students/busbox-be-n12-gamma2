@@ -6,7 +6,6 @@ const Schema = mongoose.Schema
 const busSchema = new Schema({
     busId : dbUtils.reqString,
     busType : dbUtils.reqString,
-    numberOfStops : dbUtils.reqNumber,
     priceFromOriginToEnd : dbUtils.reqNumber,
     numberOfSeats : dbUtils.reqNumber,
     seatLayout : dbUtils.reqString,     // 2X2 / 2X1
