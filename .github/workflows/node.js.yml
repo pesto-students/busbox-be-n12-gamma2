@@ -5,12 +5,13 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ development ]
+    branches: [ master ]
+  pull_request: 
+    branches: [ master ]
+
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
         node-version: [16.x]
@@ -21,6 +22,18 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: npm i
-    - run: npm run build --if-present
-    - run: npm start
+    - run: npm ci
+    - name: SSH Remote Commands
+      uses: appleboy/ssh-action@v0.1.2
+      with: 
+        key: ${{secrets.GOOGLE_CLOUD_VM_SSH}}
+        host: ${{secrets.GOOGLE_CLOUD_VM_IP}}
+        username: ${{secrets.GOOGLE_CLOUD_VM_USERNAME}}
+        script: |
+          pm2 delete all
+          cd /home/patilgajanan1807/busbox-be-n12-gamma2
+          git pull
+          npm install
+          pm2 start ./src/server.js
+
+          
