@@ -26,7 +26,7 @@ jobs:
     - name: SSH Remote Commands
       uses: appleboy/ssh-action@v0.1.2
       with: 
-        key: ${{secrets.GOOGLE_CLOUD_VM_SSH}}
+        key: ${{secrets.GOOGLE_CLOUD_VM_KEY}}
         host: ${{secrets.GOOGLE_CLOUD_VM_IP}}
         username: ${{secrets.GOOGLE_CLOUD_VM_USERNAME}}
         script: |
