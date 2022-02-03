@@ -34,6 +34,7 @@ jobs:
           cd /home/patilgajanan1807/busbox-be-n12-gamma2
           pwd
           git checkout development
+          git stash
           git pull origin development
           rm -rf node_modules
           npm install
