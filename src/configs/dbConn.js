@@ -8,6 +8,7 @@ const connectDB = async () => {
         })
     } catch (err){
         console.error(err)
+        connectDB()
     }
 }
 

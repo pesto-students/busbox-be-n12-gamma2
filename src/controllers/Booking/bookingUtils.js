@@ -1,6 +1,8 @@
 const SeatLock = require('../../model/SeatLock')
 const moment = require('moment')
-const mongoose = require('mongoose')
+const PaymentIntent = require('../../model/PaymentIntent')
+const stripe = require('stripe')(process.env.STRIPE_SECRETE_API_KEY)
+const BusStatus = require('../../model/BusStatus');
 
 const sendBadRequest = (res, message) => {
   res.status(400).json({message})
@@ -9,6 +11,7 @@ const sendBadRequest = (res, message) => {
 const verifyBookingParams = (req, res, next) => {
     let 
       { busId,
+        busType,
         selectedSeats,
         sourceCity,
         destinationCity,
@@ -20,6 +23,7 @@ const verifyBookingParams = (req, res, next) => {
       } = req.body;
 
       if (!busId) return sendBadRequest(res, "missing required string busId")
+      if (!busType) return sendBadRequest(res, "missing required string busType")
       if (!selectedSeats) return sendBadRequest(res, "missing required number array selectedSeats")
       if (!sourceCity) return sendBadRequest(res, "missing required string sourceCity")
       if (!destinationCity) return sendBadRequest(res, "missing requiredString destinationCity")
@@ -28,9 +32,7 @@ const verifyBookingParams = (req, res, next) => {
       if (!dropLocation) return sendBadRequest(res, "missing dropLocation")
       if (!passengerDetails) return sendBadRequest(res, "missing passenger details")
       if (!contactDetails) return sendBadRequest(res, "missing contact details")
-      if (!isValidLocation(pickupLocation) ) return sendBadRequest(res, `invalid pickup location :  ${pickupLocation}`)
-      if (!isValidLocation(dropLocation)) return sendBadRequest(res, `invalid drop location : ${dropLocation}`)
-      if (!isValidPassenger(passengerDetails)) return sendBadRequest(res, `invalid passenger details ${passengerDetails}`)
+      if (passengerDetails.map(isValidPassenger).includes(false)) return sendBadRequest(res, `invalid passenger details ${passengerDetails}`)
       if (!isValidContact(contactDetails)) return sendBadRequest(res, `invalid contactDetails ${contactDetails}`)
       if (selectedSeats.map(isValidSeat).includes(false)) return sendBadRequest(res, `selected seats are invalid ${selectedSeats}`)
       
@@ -38,13 +40,14 @@ const verifyBookingParams = (req, res, next) => {
   }
 
 const isValidSeat = seat => {
-   return !(!seat || (seat <= 0 && seat >= 45))
+   return Number.isInteger(seat) && seat > 0 && seat < 45
 }
 
-const isValidLocation = location => {
-    const {address, departureTime} = location;
-    return !(!address || !departureTime)
-}
+// const isValidLocation = location => {
+//     const {address, departureTime} = location;
+//     return !(!address || !departureTime)
+//     TODO :: handle this from database
+// }
 
 const isValidPassenger = passenger => {
     const {name, age, gender} = passenger
@@ -56,29 +59,61 @@ const isValidContact = contact => {
     return !(!email || !phone)
 }
 
-const areSelectedSeatsAvailable = (selected, actual) => {
-    const statuses = selected.map(selectedSeatNumber => {
-      const currentSeat = actual.find(seat => seat.seatNumber === selectedSeatNumber)
-      return currentSeat?.status?.toLowerCase() === "available"
-    })
-    return !statuses.includes(false);
+const areSelectedSeatsAvailable = async (busId, date, selected) => {
+  const ttlDate = moment(date, 'DD/MM/YYYY');
+  const busStatus = await BusStatus.findOne({busId, date}).exec();
+  if(!busStatus){
+    await BusStatus.create([{busId,date,ttlDate, bookedSeats:[]}])
+    return true;
+  }
+  const bookedSeats = busStatus.bookedSeats;
+  const conflict = bookedSeats.filter(bookedSeat => selected.includes(bookedSeat.seatNumber));
+  return (!(conflict.length > 0))
 }
 
-const lockSelectedSeats = async (seats, busId, bookingId, journeyDate) => {
+const lockSelectedSeats = async (seats, busId, bookingId, journeyDate, session) => {
   const locks = seats.map(seat => ({
       bookingId,
-      seat : `${busId}:${journeyDate}:${seat.seatNumber}`
+      seat : `${busId}:${journeyDate}:${seat}`
     }))
 
-  const session = await mongoose.startSession();
-  const result = await session.withTransaction(() => {
-    return SeatLock.create(locks, {session});
-  });
+  const result = await SeatLock.create(locks, {session});
   return result || false;
 }
+
+const getSessionObject = ({email, bookingId, busType, selectedSeats, totalFare}) => (
+  {
+    payment_method_types: ['card'],
+    mode: 'payment',
+    customer_email : email,
+    success_url: `${process.env.SERVER_URL}/bookings/success/${bookingId}/${email}`,
+    cancel_url: `${process.env.SERVER_URL}/bookings/cancel/${bookingId}/${email}`,
+    line_items: [
+      { price_data: {
+          currency : 'inr',
+          product_data: {
+            name : busType,
+            description : `Seats : ${selectedSeats.join(', ')}`
+          }, 
+          unit_amount: (totalFare*100)
+        }
+      , quantity:1
+      }
+    ]
+  }
+)
+
+const initiateRefund = (bookingId) => {
+  return PaymentIntent.findOne({bookingId})
+    .then(({paymentIntent}) => stripe.refunds.create({ payment_intent : paymentIntent }))
+}
+
+
 
 module.exports = {
   verifyBookingParams,
   areSelectedSeatsAvailable,
-  lockSelectedSeats
+  lockSelectedSeats,
+  initiateRefund,
+  getSessionObject
 };

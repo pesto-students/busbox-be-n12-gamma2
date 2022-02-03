@@ -178,7 +178,19 @@ const defaultData = [
 //     res.json(result)
 // })
 
+todos :: 
+
+implement get bookings with jwt verfication
+implement cancel booking
+    figure out how to send otp on email/phone
+implement signin with google
+implement guest login
+populate database with multiple buses
+change total fare logic 
 
 
+{"_id":{"$oid":"61daf2d59d6f31ce2b79a34e"},"busId":"Banglore-Bhubaneswar Express","busType":"Volvo, A/C Sleeper","numberOfStops":{"$numberInt":"10"},"priceFromOriginToEnd":{"$numberInt":"2500"},"numberOfSeats":{"$numberInt":"45"},"seatLayout":"2X1","aminities":["A/C","Wifi","1 Rest Stop","Charging Socket"],"busRoute":[{"cityName":"banglore","cityId":"banglore-route-1","stopNumber":{"$numberInt":"1"},"departureTime":"08:45 PM","journeyTime":"00:00 Hrs","_id":{"$oid":"61daf2d59d6f31ce2b79a34f"}},{"cityName":"tirupati","cityId":"tirupati-route-1","stopNumber":{"$numberInt":"2"},"departureTime":"11:45 PM","journeyTime":"03:00 Hrs","_id":{"$oid":"61daf2d59d6f31ce2b79a350"}},{"cityName":"vijaywada","cityId":"vijaywada-route-1","stopNumber":{"$numberInt":"3"},"departureTime":"02:00 AM","journeyTime":"05:15 Hrs","_id":{"$oid":"61daf2d59d6f31ce2b79a351"}},{"cityName":"bhubaneswar","cityId":"bhubaneswar-route-1","stopNumber":{"$numberInt":"4"},"departureTime":"08:45 AM","journeyTime":"09:00 Hrs","_id":{"$oid":"61daf2d59d6f31ce2b79a352"}}],"ratings":{"rating":{"$numberDouble":"4.6"},"totalRatings":{"$numberInt":"413"},"_id":{"$oid":"61daf2d59d6f31ce2b79a353"}},"runningDays":["Monday","Wednesday","Friday"],"__v":{"$numberInt":"0"},"isSleeper":true}
 */
+
+console.log(defaultData);
 

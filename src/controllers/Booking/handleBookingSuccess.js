@@ -1,40 +1,50 @@
 const mongoose = require('mongoose')
-const Bus = require('../../model/Bus')
+const BusStatus = require('../../model/BusStatus')
 const Booking = require('../../model/Booking')
+const redis = require('../../configs/redis')
+const moment = require('moment');
+const PaymentIntent = require('../../model/PaymentIntent');
+const stripe = require('stripe')(process.env.STRIPE_SECRETE_API_KEY)
 
 const handleBookingSuccess = async (req, res) => {
-    const {bookingId} = req.params;
+    const {bookingId, email} = req.params;
     const session = await mongoose.startSession();
     try {
         await session.startTransaction();
-        const bookingObject = await Booking.findOneAndUpdate(
-            {'customerBookings.bookingId' : bookingId}, 
-            { '$set' : { "customerBookings.$.bookingStatus":"BOOKING_SUCCESSFUL"} }, {session, returnDocument:'after'}
+        const client = await redis.getClient();
+        let newBooking = await client.get(bookingId);
+        newBooking = JSON.parse(newBooking);
+        
+        await Booking.updateOne(
+            { customerEmail: email},
+            { $push: {customerBookings: newBooking}},
+            { upsert: true, session}
+          ).exec();
+        const bookedSeats = newBooking.bookedSeats.map(
+            seatNumber => ({
+                seatNumber, 
+                status : 'Booked', 
+                from: newBooking.sourceCity.stopNumber,
+                to: newBooking.destinationCity.stopNumber
+            })
+        ) 
+        console.log(bookedSeats);
+        const result = await BusStatus.updateOne(
+            {busId: newBooking.busId, date: newBooking.journeyDate},
+            {$push: {bookedSeats: {$each: bookedSeats}}},
+            {session, upsert: true}
         ).exec();
-
-        if(!bookingObject){
-            throw new Error(`findAndUpdate booking failed id : ${bookingId}`)
-        } 
-        const customerBookings = bookingObject.customerBookings;
-        const currentBooking = customerBookings.filter(booking => booking.bookingId === bookingId)[0];
-
-        const bookedSeats = currentBooking.bookedSeats.map(seat => seat.seatNumber);
-        const updatedBusStatus = await Bus.updateOne(
-            {busId: currentBooking.busId},
-            {'$set' : {'seatStatuses.$[elemX].status': "Booked"}},
-            {arrayFilters: [{'elemX.seatNumber' : {'$in': bookedSeats}}], session, returnDocument:'after'}
-        ).exec();
-
+        console.log(result);
         await session.commitTransaction()
-        res.json(currentBooking);
-        if(!currentBooking){
-            return res.status(500).json({message : "Internal Error, DB failure, Booking Not Found"});
-        }
-
+        res.redirect(301, `${process.env.FRONTEND_URL}/bookings/details/${bookingId}`);
     } catch (e) {
         await session.abortTransaction();
-        res.json({message : e.message})
-        console.error(e);
+        PaymentIntent.findOne({bookingId}).then(({paymentIntent}) => {
+            stripe.refunds.create({ payment_intent : paymentIntent })
+        })
+        const message = 'Aww Snap.., \n Booking Failed, any amount debited from your account will be refunded shortly.'
+        res.redirect(301, `${process.env.FRONTEND_URL}/error/${bookingId}/${message}`);
+        console.error(e, {...e});
     } finally {
         session.endSession();
     }

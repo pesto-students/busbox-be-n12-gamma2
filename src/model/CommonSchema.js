@@ -6,16 +6,15 @@ const busRouteSchema = new Schema({
     cityName : dbUtils.reqString,
     cityId : dbUtils.reqString,
     stopNumber: dbUtils.reqNumber,
-    departureTime : dbUtils.reqString
+    departureTime : dbUtils.reqString,
+    journeyTimeInMins: dbUtils.reqNumber
 })
 
 const seatStatusSchema = new Schema({
-    seatType : dbUtils.reqString,
     seatNumber : dbUtils.reqNumber,
     status : dbUtils.reqString,
     from : Number,
     to : Number,
-    reservedFor : String
 })
 
 const ratingsSchema = new Schema({

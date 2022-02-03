@@ -6,21 +6,22 @@ const get6RandomNumbers = () => {
 }
 
 const handleInitiateCancel = async (req, res) => {
-    // generate a random 6 digit integer
-    const {bookingId} = req.body;
-    if(!bookingId) return res.status(400).json({message : "missing required param bookingId"});
-
     const user = req.user;
     if(!user) return res.sendStatus(401);
+
+    const {bookingId} = req.body;
+    if(!bookingId) return res.status(400).json({
+        message : "missing required param bookingId"
+    });
 
     const otp = get6RandomNumbers();
 
     const client = await redis.getClient();
-    client.setEx(bookingId, 3600, otp.toString())
-        .then(result => nodemailer.sendOtpOnEmail("patilgajanan8485@gmail.com", otp))
-        .then(result => res.sendStatus(204))
+    client.setEx(bookingId, 900, otp.toString())
+        .then(() => nodemailer.sendOtpOnEmail(user, otp))
+        .then(() => res.sendStatus(204))
         .catch(err => { 
-            console.log(err);
+            console.log(err, {...err});
             res.sendStatus(503)
         })
 }
