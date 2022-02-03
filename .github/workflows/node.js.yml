@@ -30,11 +30,10 @@ jobs:
         host: ${{secrets.GOOGLE_CLOUD_VM_IP}}
         username: ${{secrets.GOOGLE_CLOUD_VM_USERNAME}}
         script: |
-          pm2 delete all
           cd /home/patilgajanan1807/busbox-be-n12-gamma2
           git checkout development
           git pull
           npm install
-          pm2 start ./src/server.js
+          npm run restart
 
           

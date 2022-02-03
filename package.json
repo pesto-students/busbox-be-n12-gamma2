@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon ./src/server.js",
-    "nodemon" : "nodemon"
+    "nodemon": "nodemon",
+    "start" : "pm2 start ./src/server.js",
+    "restart" : "pm2 delete all && npm start"
   },
   "repository": {
     "type": "git",
@@ -31,6 +33,7 @@
     "mongoose": "^6.1.5",
     "nodemailer": "^6.7.2",
     "phantomjs-prebuilt": "^2.1.16",
+    "pm2": "^5.1.2",
     "redis": "^4.0.1",
     "stripe": "^8.197.0",
     "uuid": "^8.3.2"
