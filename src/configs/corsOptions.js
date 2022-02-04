@@ -1,4 +1,4 @@
-const whiteList = ['http://localhost:1234']
+const whiteList = ['http://localhost:1234', 'http://patilgajanan.com']
 const corsOptions = {
     origin : (origin, callback) => {
         if(whiteList.includes(origin) || !origin){

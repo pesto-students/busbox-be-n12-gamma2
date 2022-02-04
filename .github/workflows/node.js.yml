@@ -30,7 +30,7 @@ jobs:
         host: ${{secrets.GOOGLE_CLOUD_VM_IP}}
         username: ${{secrets.GOOGLE_CLOUD_VM_USERNAME}}
         script: |
-          echo shell $SHELL  
+          sudo service redis-server restart
           cd /home/patilgajanan1807/busbox-be-n12-gamma2
           pwd
           git checkout development
