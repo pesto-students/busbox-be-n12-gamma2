@@ -19,7 +19,7 @@ const handleLogOut = async (req, res) => {
     foundUser.refreshToken = ''
     foundUser.save()
     
-    clearCookieAndSendResponse()
+    clearCookieAndSendResponse(res)
 }
 
 module.exports = handleLogOut
