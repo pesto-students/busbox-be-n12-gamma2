@@ -2,7 +2,7 @@ const nodemailer = require('nodemailer')
 
 const transporter = nodemailer.createTransport({
     host: "smtp-mail.outlook.com",
-    port: 25,
+    port: 587,
     secureConnection: false,
     auth: {
         user: process.env.NODE_MAILER_EMAIL,
