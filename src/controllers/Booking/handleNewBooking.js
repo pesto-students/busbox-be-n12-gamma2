@@ -80,7 +80,7 @@ const handleNewBooking = async (req, res) => {
         if(err.code === 11000) {
           return res.status(503).json({message : "Selected seats are not available at the moment, please try again in 10 mins."});
         }
-        res.status(500).json({message : err.message, from : "hello"})
+        res.status(500).json({message : err.message})
       } finally {
         mongooseSession.endSession();
       }
@@ -89,7 +89,7 @@ const handleNewBooking = async (req, res) => {
     if(err.code === 11000) {
       return res.status(503).json({message : "Selected seats are not available at the moment, please try again in 10 mins."});
     }
-    res.status(500).json({message: err.message, from : 'world'});
+    res.status(500).json({message: err.message});
   }
 }
 
