@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt')
-const jwtUtils = require('../../utils/jwtUtils')
+const jwtUtils = require('./jwtUtils')
 const User = require('../../model/User')
 
 const handleLogin = async (req, res) => {
@@ -11,7 +11,7 @@ const handleLogin = async (req, res) => {
     const match = await bcrypt.compare(password, foundUser.password)
     if(!match) return res.sendStatus(401)
 
-    const user = {email, password}
+    const user = {email}
     const refreshToken = await jwtUtils.getRefreshToken(user)
     const accessToken = await jwtUtils.getAccessToken(user)
 
@@ -19,7 +19,7 @@ const handleLogin = async (req, res) => {
     foundUser.refreshToken = refreshToken
     const result = await foundUser.save()
 
-    res.cookie('jwt', refreshToken, {httpOnly: true, sameSite: 'None', maxAge: 24 * 60 * 60 * 1000})
+    res.cookie('jwt', refreshToken, {httpOnly: true, secure:true, sameSite: 'None', maxAge: 24 * 60 * 60 * 1000})
     res.json({accessToken})
 }
 

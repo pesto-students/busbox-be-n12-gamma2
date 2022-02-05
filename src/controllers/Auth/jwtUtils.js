@@ -4,7 +4,7 @@ async function getAccessToken (payload){
     const token = await jwt.sign(
         payload,
         process.env.ACCESS_TOKEN_SECRET,
-        {expiresIn : '1m'}
+        {expiresIn : '45m'}
     )
     return token
 }
@@ -18,4 +18,17 @@ async function getRefreshToken (payload){
     return token
 }
 
-module.exports = {getAccessToken, getRefreshToken}
+const setJwtCookie = (res, refreshToken) => {
+    res.cookie(
+        'jwt', 
+        refreshToken, 
+        {   httpOnly: true, 
+            secure:true, 
+            sameSite: 'None', 
+            maxAge: 24 * 60 * 60 * 1000
+        }
+    )
+    return res;
+}
+
+module.exports = {getAccessToken, getRefreshToken, setJwtCookie}

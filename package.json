@@ -4,7 +4,10 @@
   "description": "This is the Backend Implementation of simple Bus Ticket Booking System.",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon ./src/server.js"
+    "dev": "nodemon ./src/server.js",
+    "nodemon": "nodemon",
+    "start" : "pm2 start ./src/server.js",
+    "restart" : "pm2 delete all && npm start"
   },
   "repository": {
     "type": "git",
@@ -23,9 +26,16 @@
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
     "express": "^4.17.2",
+    "google-auth-library": "^7.11.0",
+    "html-pdf": "^2.2.0",
     "jsonwebtoken": "^8.5.1",
     "moment": "^2.29.1",
-    "mongoose": "^6.1.5",
+    "mongoose": "^6.2.0",
+    "nodemailer": "^6.7.2",
+    "phantomjs-prebuilt": "^2.1.16",
+    "pm2": "^5.1.2",
+    "redis": "^4.0.1",
+    "stripe": "^8.197.0",
     "uuid": "^8.3.2"
   },
   "devDependencies": {

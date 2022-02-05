@@ -8,7 +8,9 @@ const authController = require('../controllers/Auth/authController')
 router.post('/signup', authController.handleSignUp)
 router.post('/login', authController.handleLogin)
 router.post('/logout', authController.handleLogOut)
+router.post('/verify-email', authController.handleVerifyEmail)
 router.post('/refresh', authController.handleRefresh)
+router.post('/google-login', authController.handleGoogleLogin)
 
 module.exports = router
 

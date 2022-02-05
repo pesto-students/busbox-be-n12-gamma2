@@ -1,10 +1,20 @@
 const moment = require('moment')
 const Bus = require('../../model/Bus')
+const BusStatus = require('../../model/BusStatus');
 
-
-function isMissingFields(req){
-    const {sourceCity, destinationCity, date} = req.body
-    return (!sourceCity || !destinationCity || !date) 
+function handleMissingFields(req, res){
+    const {sourceCity, destinationCity, date} = req.query
+    if(!sourceCity) {
+        res.status(400).json({message : "missing required field 'sourceCity' : 'String' "})
+        return false;
+    } else if(!destinationCity) {
+        res.status(400).json({message : "missing required field 'destinationCity' : 'String' "})
+        return false;
+    } else if(!date) {
+        res.status(400).json({message : "missing required field 'date' : 'String(DD/MM/YYYY)' "})
+        return false;
+    }
+    return true;
 }
 
 function getBusesAvailableOnDay(buses, date){
@@ -17,21 +27,47 @@ function getBusesAvailableOnDay(buses, date){
     return runningBuses
 }
 
-function getBusesOnRoute(buses, source, destination){
+const getStopNumber = (bus, cityName) => {
+    const stopNumber = bus.busRoute.filter(route => 
+        route.cityName === cityName)[0]?.stopNumber
+    return stopNumber;
+}
+
+function getBusesOnRoute(buses, sourceCity, destinationCity){
     const busesOnRoute = buses.filter( bus => {
-        const sourceStopNumber = bus.busRoute.filter(route => route.cityName === source)[0]?.stopNumber
-        const destinationStopNumber = bus.busRoute.filter(route => route.cityName === destination)[0]?.stopNumber
+        const sourceStopNumber = getStopNumber(bus, sourceCity)
+        const destinationStopNumber = getStopNumber(bus, destinationCity)
         return sourceStopNumber < destinationStopNumber
     })
     return busesOnRoute
 }
 
-const handleListBuses = async (req, res) => {
-    let {sourceCity, destinationCity, date} = req.body
-    
-    if(isMissingFields(req)) { 
-        return res.status(400).json({message : "missing required fields"})
+function filterOutFullBuses(buses, date){
+    return buses.filter(async bus => {
+        const busId = bus.busId;
+        const busStatus = await BusStatus.findOne({busId, date})
+        if(!busStatus) return true;
+        if(busStatus?.bookedSeats?.length < bus.numberOfSeats) return true;
+        return false;
+    })
+}
+
+function addPricePerSeat(sourceCity, destinationCity) {
+    return function (busDocument) {
+        const bus = busDocument.toObject()
+        console.log(bus);
+        const sourceStopNumber = getStopNumber(bus, sourceCity)
+        const destinationStopNumber = getStopNumber(bus, destinationCity)
+        const numberOfStops = (destinationStopNumber - sourceStopNumber)
+        const pricePerStop = (bus.priceFromOriginToEnd / bus.busRoute.length) 
+        const pricePerSeat = pricePerStop * numberOfStops; 
+        return { ...bus, pricePerSeat }
     }
+}
+
+const handleListBuses = async (req, res) => {
+    let {sourceCity, destinationCity, date} = req.query
+    if(!handleMissingFields(req, res)) return;
 
     sourceCity = sourceCity.toLowerCase().trim()
     destinationCity = destinationCity.toLowerCase().trim()
@@ -54,7 +90,10 @@ const handleListBuses = async (req, res) => {
         return res.status(404).json({message : "No Routes Availalbe on selected day"})
     }
 
-    res.json(busesAvailableOnDay)
+    const filteredBuses = filterOutFullBuses(busesAvailableOnDay, date)
+    const finalBuses = filteredBuses.map(addPricePerSeat(sourceCity, destinationCity))
+
+    res.json(finalBuses)
 }
 
 module.exports = handleListBuses

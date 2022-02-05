@@ -3,17 +3,24 @@ const dbUtils = require('./dbUtils')
 const commonSchema = require('./CommonSchema')
 const Schema = mongoose.Schema
 
+const seatLayoutSchema = new Schema ({
+    numberOfDecks : dbUtils.reqNumber,
+    seatsOnLeft : dbUtils.reqNumber,
+    seatsOnRight : dbUtils.reqNumber,
+    numberOfRows : dbUtils.reqNumber,
+    reservedForLadiesSeats : [dbUtils.reqNumber]
+})
+
 const busSchema = new Schema({
-    busId : dbUtils.reqString,
+    busId : {...dbUtils.reqString, unique:true},
     busType : dbUtils.reqString,
-    numberOfStops : dbUtils.reqNumber,
     priceFromOriginToEnd : dbUtils.reqNumber,
     numberOfSeats : dbUtils.reqNumber,
-    seatLayout : dbUtils.reqString,     // 2X2 / 2X1
+    seatLayout : seatLayoutSchema,
     aminities : [String],
     busRoute : [commonSchema.busRouteSchema],
     ratings : commonSchema.ratingsSchema,
-    seatStatuses : [commonSchema.seatStatusSchema],
+    isSleeper: {type: Boolean, required: true},
     runningDays : {
         type : [String],
         required : true

@@ -5,7 +5,7 @@ const commonSchema = require('./CommonSchema')
 const Schema = mongoose.Schema
 
 const locationSchema = new Schema({
-    cityId : dbUtils.reqString,
+    cityId : {...dbUtils.reqString, unique: true},
     locations : [commonSchema.locationSchema]
 })
 

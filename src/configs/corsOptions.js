@@ -1,4 +1,4 @@
-const whiteList = []
+const whiteList = ['http://localhost:1234', 'http://patilgajanan.com']
 const corsOptions = {
     origin : (origin, callback) => {
         if(whiteList.includes(origin) || !origin){
@@ -7,7 +7,8 @@ const corsOptions = {
             callback(new Error("CORS ERROR"))
         }
     },
-    optionsSuccessStatus : 200 
+    optionsSuccessStatus : 200 ,
+    credentials:true
 }
 
 module.exports = corsOptions
