@@ -95,7 +95,7 @@ const getSessionObject = ({email, bookingId, busType, selectedSeats, totalFare})
             name : busType,
             description : `Seats : ${selectedSeats.join(', ')}`
           }, 
-          unit_amount: (totalFare*100)
+          unit_amount: Math.floor(totalFare*100)
         }
       , quantity:1
       }
