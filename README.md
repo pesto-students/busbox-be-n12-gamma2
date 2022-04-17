@@ -1,4 +1,4 @@
-![BusBox Logo](src/icons/busbox.png)
+![BusBox Logo](src/public/busbox.png)
 
 BusBox is the simple bus ticket booking application. It gives you a nice and user-friendly platform to book your bus tickets for your journeys in India. Along with ticket booking BusBox also gives you a way to track all your journeys and ability to cancel your tickets as per your needs.
 
