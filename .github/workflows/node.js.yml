@@ -1,0 +1,43 @@
+# This workflow will do a clean install of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+
+name: Node.js CI
+
+on:
+  push:
+    branches: [ development ]
+  pull_request: 
+    branches: [ development ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [16.x]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v2
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    - run: npm ci
+    - name: SSH Remote Commands
+      uses: appleboy/ssh-action@v0.1.2
+      with: 
+        key: ${{secrets.GOOGLE_CLOUD_VM_KEY}}
+        host: ${{secrets.GOOGLE_CLOUD_VM_IP}}
+        username: ${{secrets.GOOGLE_CLOUD_VM_USERNAME}}
+        script: |
+          sudo service redis-server restart
+          cd /home/patilgajanan1807/busbox-be-n12-gamma2
+          pwd
+          git checkout development
+          git stash
+          git pull origin development
+          rm -rf node_modules
+          npm install
+          npm run restart
+
+          
